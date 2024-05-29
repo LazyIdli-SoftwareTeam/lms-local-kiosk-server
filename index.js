@@ -37,6 +37,7 @@ const checkFolder = async (path) => {
 
 
 //here is the new comment that i added
+console.log('working')
 socket.on('file', async (d) => {
   try {
     let newpath = __dirname + '/files/';
