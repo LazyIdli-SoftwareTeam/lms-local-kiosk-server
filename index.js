@@ -1,16 +1,26 @@
 const io = require('socket.io-client');
-const express = require('express');
-const app = express();
 const fs = require('fs');
-const fileUpload = require('express-fileupload');
+const { default: simpleGit } = require('simple-git');
 const socket = io('http://localhost:3000');
-socket.on('connect', () => {
-  console.log('socket connected');
+socket.on('connect', async () => {
+  try {
+    const git = simpleGit();
+    await git.init();
+    const latest = (await git.log()).latest.hash;
+    const data = await fs.readFileSync('commit');
+    if (data.length <= 0 || data != latest) {
+      console.log('pulling');
+      git.pull();
+      await fs.writeFileSync('commit', latest);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 });
+
 socket.on('error', (e) => {
   console.log(e);
 });
-app.use(fileUpload());
 const checkFolder = async (path) => {
   try {
     const existPath = fs.existsSync(path);
@@ -25,6 +35,8 @@ const checkFolder = async (path) => {
   }
 };
 
+
+//here is the new comment that i added
 socket.on('file', async (d) => {
   try {
     let newpath = __dirname + '/files/';
@@ -50,5 +62,3 @@ socket.on('file', async (d) => {
     });
   }
 });
-
-app.listen(8000);
