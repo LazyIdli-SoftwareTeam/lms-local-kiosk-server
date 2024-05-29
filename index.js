@@ -6,6 +6,8 @@ socket.on('connect', async () => {
   try {
     const git = simpleGit();
     await git.init();
+    const logs = await git.log(); 
+    console.log(logs);
     const latest = (await git.log()).latest.hash;
     const data = await fs.readFileSync('commit');
     if (data.length <= 0 || data != latest) {
@@ -38,6 +40,8 @@ const checkFolder = async (path) => {
 
 //here is the new comment that i added
 console.log('working')
+console.log('working')
+
 socket.on('file', async (d) => {
   try {
     let newpath = __dirname + '/files/';
