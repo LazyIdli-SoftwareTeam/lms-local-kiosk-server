@@ -1,19 +1,30 @@
 const io = require('socket.io-client');
 const fs = require('fs');
-const { default: simpleGit } = require('simple-git');
+const { checkFolder } = require('./folder');
+const KIOSKID = 'PTK-001';
 const socket = io('http://localhost:3000');
 socket.on('connect', async () => {
+  socket.emit('askFiles', { kioskId: 'PTK-001' });
+});
+
+socket.on('getFiles', async (d) => {
   try {
-    const git = simpleGit();
-    await git.init();
-    const logs = await git.log(); 
-    console.log(logs);
-    const latest = (await git.log()).latest.hash;
-    const data = await fs.readFileSync('commit');
-    if (data.length <= 0 || data != latest) {
-      console.log('pulling');
-      git.pull();
-      await fs.writeFileSync('commit', latest);
+    for (const el of Object.keys(d.kiosk)) {
+      console.log(el);
+      if (el === 'mediaForTopAd') {
+        for (const fileInfo of d.kiosk[el]) {
+          if (fileInfo.archive && fileInfo.archive) continue;
+          const path = __dirname + '/files/' + d.kiosk.customId + '/' + el;
+          const folder = await checkFolder(path);
+          if (folder) {
+            await fs.writeFileSync(
+              path + '/' + fileInfo.fileInfo.name,
+              fileInfo.chunks,
+              { flag: 'wx' }
+            );
+          }
+        }
+      }
     }
   } catch (e) {
     console.log(e);
@@ -22,48 +33,4 @@ socket.on('connect', async () => {
 
 socket.on('error', (e) => {
   console.log(e);
-});
-const checkFolder = async (path) => {
-  try {
-    const existPath = fs.existsSync(path);
-    if (!existPath) {
-      const dir = await fs.mkdirSync(path, { recursive: true });
-      return dir;
-    } else {
-      return existPath;
-    }
-  } catch (e) {
-    return false;
-  }
-};
-
-
-//here is the new comment that i added
-console.log('working')
-console.log('working')
-
-socket.on('file', async (d) => {
-  try {
-    let newpath = __dirname + '/files/';
-    const file = d.file;
-    const filename = file.name;
-    newpath += d.kioskId + '/';
-    newpath += d.section + '/';
-    let fileExist = await checkFolder(newpath);
-    if (!fileExist)
-      return res.status(500).json({ message: 'Some error occurred' });
-    await fs.writeFileSync(newpath + filename, file.data);
-    socket.emit('fileStatus', {
-      kioskId: d.kioskId,
-      fileName: filename,
-      status: 'uploaded',
-    });
-  } catch (e) {
-    console.log(e);
-    socket.emit('fileStatus', {
-      kioskId: d.kioskId,
-      fileName: filename,
-      status: 'uploaded',
-    });
-  }
 });
