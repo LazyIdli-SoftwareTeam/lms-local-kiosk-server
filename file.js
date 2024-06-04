@@ -17,10 +17,23 @@ const createFile = async (d, config, fileInfo, key) => {
 module.exports.kioskConfig = async (d, config) => {
   for (const el of Object.keys(d[config])) {
     if (el === 'mediaForTopAd') {
+      const publishedFiles = [];
       for (const fileInfo of d[config][el]) {
         if (fileInfo.archive && fileInfo.archive) return;
         await createFile(d, config, fileInfo, el);
+        publishedFiles.push(fileInfo.fileInfo.name);
       }
+      console.log(publishedFiles);
+      const dirPath = __dirname + '/files/' + d[config].customId + '/' + el;
+      fs.readdir(dirPath, async (err, files) => {
+        if (err) console.log(err);
+        for (const file of files) {
+          if (!publishedFiles.includes(file)) {
+            console.log('here', file);
+            await fs.unlinkSync(dirPath + '/' + file);
+          }
+        }
+      });
     }
   }
 };
