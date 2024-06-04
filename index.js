@@ -11,7 +11,6 @@ socket.on('connect', async () => {
 socket.on('getFiles', async (d) => {
   try {
     await kioskConfig(d, 'kiosk');
-    await kioskConfig(d, 'common');
   } catch (e) {
     console.log(e);
   }
