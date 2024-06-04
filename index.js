@@ -10,17 +10,25 @@ socket.on('connect', async () => {
 socket.on('getFiles', async (d) => {
   try {
     for (const el of Object.keys(d.kiosk)) {
-      console.log(el);
       if (el === 'mediaForTopAd') {
+        console.log(d.kiosk[el]);
         for (const fileInfo of d.kiosk[el]) {
           if (fileInfo.archive && fileInfo.archive) continue;
           const path = __dirname + '/files/' + d.kiosk.customId + '/' + el;
           const folder = await checkFolder(path);
+          const exists = await fs.existsSync(
+            path + '/' + fileInfo.fileInfo.name
+          );
+          if (exists) {
+            await fs.unlinkSync(path + '/' + fileInfo.fileInfo.name);
+          }
           if (folder) {
-            await fs.writeFileSync(
+            fs.writeFileSync(
               path + '/' + fileInfo.fileInfo.name,
               fileInfo.chunks,
-              { flag: 'wx' }
+              {
+                flag: 'wx',
+              }
             );
           }
         }
