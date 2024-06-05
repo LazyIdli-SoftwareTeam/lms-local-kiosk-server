@@ -17,6 +17,18 @@ const createFile = async (d, config, fileInfo, key) => {
     );
   }
 };
+
+const deleteInstructionVideo = async (kisokId) => {
+  const path = __dirname + '/files/' + kisokId + '/instructionVideo';
+  const exists = await fs.existsSync(path);
+  if (exists) {
+    const files = await fs.readdirSync(path);
+    for (const file of files) {
+      await fs.unlinkSync(path + '/' + file);
+    }
+  }
+};
+
 module.exports.kioskConfig = async (d, config) => {
   for (const el of Object.keys(d[config])) {
     if (
@@ -26,6 +38,9 @@ module.exports.kioskConfig = async (d, config) => {
     ) {
       const publishedFiles = [];
       let tempO = d[config][el];
+      if (el === 'instructionVideo') {
+        await deleteInstructionVideo(d[config].customId);
+      }
       if (!tempO) continue;
       for (const fileInfo of tempO) {
         if (fileInfo.archive) continue;
