@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express-fileupload": "^1.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "simple-git": "^3.24.0",
     "socket.io-client": "^4.7.5"
   }
