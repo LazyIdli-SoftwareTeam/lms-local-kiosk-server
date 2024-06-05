@@ -1,0 +1,65 @@
+{
+  "kiosk": {
+    "mediaForTopAd": [
+      {
+        "fileName": "Screenshot 2024-05-31 at 11.25.18 AM.png",
+        "id": "665ef2d8b4ea86f8f9fd1b1f",
+        "archive": true,
+        "all": false
+      },
+      {
+        "fileName": "pla3.mp4",
+        "id": "665f0d4a4538077d1b69800f",
+        "archive": false,
+        "all": true
+      },
+      {
+        "fileName": "play1.mp4",
+        "id": "66600a14f9b29de1fb410431",
+        "archive": false,
+        "all": true
+      },
+      {
+        "fileName": "K-OS Image 10.png",
+        "id": "66600a1af9b29de1fb410487",
+        "archive": false,
+        "all": false
+      }
+    ],
+    "mediaForBottomOffers": [
+      {
+        "fileName": "Screenshot 2024-05-31 at 11.25.18 AM (2).png",
+        "id": "66600aba2b2aa317e32df4b9",
+        "archive": false,
+        "all": true
+      },
+      {
+        "fileName": "Screenshot 2024-05-29 at 1.38.30 PM.png",
+        "id": "66600ac12b2aa317e32df4d7",
+        "archive": false,
+        "all": false
+      }
+    ],
+    "instructionVideo": [
+      {
+        "fileName": "play2.mp4",
+        "id": "66600ace2b2aa317e32df4fe",
+        "archive": false,
+        "all": false
+      }
+    ],
+    "_id": {
+      "buffer": {
+        "type": "Buffer",
+        "data": [102, 93, 172, 245, 62, 104, 171, 56, 195, 141, 201, 217]
+      }
+    },
+    "customId": "PTK-001",
+    "name": "k1",
+    "footer": "",
+    "archive": false,
+    "scoreType": "number",
+    "header": ""
+  },
+  "common": { "footer": "", "header": "" }
+}
