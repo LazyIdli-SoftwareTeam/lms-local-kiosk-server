@@ -26,6 +26,7 @@ module.exports.kioskConfig = async (d, config) => {
     ) {
       const publishedFiles = [];
       let tempO = d[config][el];
+      if (!tempO) continue;
       for (const fileInfo of tempO) {
         if (fileInfo.archive) continue;
         await createFile(d, config, fileInfo, el);
