@@ -2,14 +2,17 @@ const io = require('socket.io-client');
 const fs = require('fs');
 const express = require('express');
 const app = express();
-const config = require('./config.json');
+let config = require('./config.json');
 const { checkFolder } = require('./folder');
 const cors = require('cors');
 const { createFile, kioskConfig } = require('./file');
 const KIOSKID = 'PTK-001';
 const socket = io('http://localhost:3000');
 socket.on('connect', async () => {
-  socket.emit('askFiles', { kioskId: 'PTK-001' });
+  setInterval(() => {
+    console.log('asking for files');
+    socket.emit('askFiles', { kioskId: 'PTK-001' });
+  }, 10000);
 });
 
 socket.on('getFiles', async (d) => {
@@ -22,8 +25,10 @@ socket.on('getFiles', async (d) => {
 app.use(express.json());
 app.use(cors());
 app.use(express.static('files'));
-app.get('/links', (req, res) => {
+app.get('/links', async (req, res) => {
   try {
+    let data = await fs.readFileSync('config.json');
+    config = JSON.parse(data);
     const nwKiosk = { ...config };
     nwKiosk.kiosk.mediaForTopAd = nwKiosk.kiosk.mediaForTopAd.filter(
       (e) => !e.archive
