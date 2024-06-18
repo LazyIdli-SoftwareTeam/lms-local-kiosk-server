@@ -3,21 +3,26 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 let config = require('./config.json');
-const { checkFolder } = require('./folder');
 const cors = require('cors');
-const { createFile, kioskConfig } = require('./file');
-const KIOSKID = 'PTK-001';
+const { kioskConfig } = require('./file');
 const socket = io('http://localhost:3000');
+const server = require('http').createServer(app);
+const ioo = require('socket.io')(server, { cors: { origin: '*' } });
+
 socket.on('connect', async () => {
   setInterval(() => {
-    console.log('asking for files');
     socket.emit('askFiles', { kioskId: 'PTK-001' });
   }, 10000);
 });
 
+// dns.resolve('google.com', (err, add) => {
+//   if (err) return;
+//   connect();
+// });
+
 socket.on('getFiles', async (d) => {
   try {
-    await kioskConfig(d, 'kiosk');
+    await kioskConfig(d, 'kiosk', ioo);
   } catch (e) {
     console.log(e);
   }
@@ -49,4 +54,8 @@ socket.on('error', (e) => {
 
 app.listen(3300, () => {
   console.log('app is working on port 3300');
+});
+
+server.listen(4700, () => {
+  console.log('socket are working');
 });

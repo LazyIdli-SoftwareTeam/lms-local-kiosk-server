@@ -5,9 +5,9 @@ const createFile = async (d, config, fileInfo, key) => {
   const folder = await checkFolder(path);
   const exists = await fs.existsSync(path + '/' + fileInfo.fileInfo.name);
   if (exists) {
-    await fs.unlinkSync(path + '/' + fileInfo.fileInfo.name);
+    return false;
   }
-  if (folder) {
+  if (folder && !exists) {
     await fs.writeFileSync(
       path + '/' + fileInfo.fileInfo.name,
       fileInfo.chunks,
@@ -15,6 +15,7 @@ const createFile = async (d, config, fileInfo, key) => {
         flag: 'wx',
       }
     );
+    return true;
   }
 };
 
@@ -29,7 +30,8 @@ const deleteInstructionVideo = async (kisokId) => {
   }
 };
 
-module.exports.kioskConfig = async (d, config) => {
+module.exports.kioskConfig = async (d, config, ioo) => {
+  let reload = false;
   for (const el of Object.keys(d[config])) {
     if (
       el === 'mediaForTopAd' ||
@@ -44,7 +46,8 @@ module.exports.kioskConfig = async (d, config) => {
       if (!tempO) continue;
       for (const fileInfo of tempO) {
         if (fileInfo.archive) continue;
-        await createFile(d, config, fileInfo, el);
+        const f = await createFile(d, config, fileInfo, el);
+        if (f) reload = true;
         publishedFiles.push(fileInfo.fileInfo.name);
       }
       const dirPath = __dirname + '/files/' + d[config].customId + '/' + el;
@@ -55,6 +58,7 @@ module.exports.kioskConfig = async (d, config) => {
         for (const file of files) {
           if (!publishedFiles.includes(file)) {
             console.log('here', file);
+            reload = true;
             await fs.unlinkSync(dirPath + '/' + file);
           }
         }
@@ -82,5 +86,8 @@ module.exports.kioskConfig = async (d, config) => {
     }
   }
   console.log(nwKiosk);
+  if (reload) {
+    ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
+  }
   await fs.writeFileSync('config.json', JSON.stringify(nwKiosk));
 };
