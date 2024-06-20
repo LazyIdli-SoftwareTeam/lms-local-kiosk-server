@@ -5,15 +5,22 @@ const app = express();
 let config = require('./config.json');
 const cors = require('cors');
 const { kioskConfig } = require('./file');
-const socket = io('http://localhost:3000');
+const LMS_BACKEND_LINK = 'http://13.232.172.215:3001/';
+const socket = io(LMS_BACKEND_LINK);
 const server = require('http').createServer(app);
 const ioo = require('socket.io')(server, { cors: { origin: '*' } });
 
 socket.on('connect', async () => {
+  console.log('connected')
   setInterval(() => {
+    console.log('asking for files');
     socket.emit('askFiles', { kioskId: 'PTK-001' });
   }, 10000);
 });
+
+socket.on('error', (e) => {
+  console.log(e); 
+})
 
 // dns.resolve('google.com', (err, add) => {
 //   if (err) return;
@@ -22,6 +29,7 @@ socket.on('connect', async () => {
 
 socket.on('getFiles', async (d) => {
   try {
+    console.log('got files', d)
     await kioskConfig(d, 'kiosk', ioo);
   } catch (e) {
     console.log(e);
