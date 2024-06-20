@@ -48,7 +48,10 @@ module.exports.kioskConfig = async (d, config, ioo) => {
       for (const fileInfo of tempO) {
         if (fileInfo.archive) continue;
         const f = await createFile(d, config, fileInfo, el);
-        if (f) reload = true;
+        if (f) {
+          console.log('create file came true', reload);
+          reload = true;
+        }
         publishedFiles.push(fileInfo.fileInfo.name);
       }
       const dirPath = __dirname + '/files/' + d[config].customId + '/' + el;
@@ -86,6 +89,7 @@ module.exports.kioskConfig = async (d, config, ioo) => {
       nwKiosk.kiosk[el] = newTemp;
     }
   }
+  console.log('reload', reload);
   if (reload) {
     ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
   }
