@@ -48,8 +48,6 @@ module.exports.kioskConfig = async (d, config, ioo) => {
         if (fileInfo.archive) continue;
         const f = await createFile(d, config, fileInfo, el);
         if (f) {
-          console.log('create file came true', reload);
-          reload = true;
         }
         publishedFiles.push(fileInfo.fileInfo.name);
       }
@@ -61,7 +59,6 @@ module.exports.kioskConfig = async (d, config, ioo) => {
         for (const file of files) {
           if (!publishedFiles.includes(file)) {
             console.log('here', file);
-            reload = true;
             await fs.unlinkSync(dirPath + '/' + file);
           }
         }
@@ -88,10 +85,9 @@ module.exports.kioskConfig = async (d, config, ioo) => {
       nwKiosk.kiosk[el] = newTemp;
     }
   }
-  console.log('reload', reload);
-  if (reload) {
-    ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
-    reload = false; 
-  }
+  // if (reload) {
+  //   ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
+  //   reload = false; 
+  // }
   await fs.writeFileSync('config.json', JSON.stringify(nwKiosk));
 };

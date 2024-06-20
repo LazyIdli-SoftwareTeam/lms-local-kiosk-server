@@ -48,7 +48,7 @@ app.get('/links', async (req, res) => {
     );
     nwKiosk.kiosk.mediaForBottomOffers =
       nwKiosk.kiosk.mediaForBottomOffers.filter((e) => !e.archive);
-
+      
     return res.status(200).json({ message: 'Done!', data: nwKiosk });
   } catch (e) {
     console.log(e);
