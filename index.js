@@ -6,21 +6,26 @@ let config = require('./config.json');
 const cors = require('cors');
 const { kioskConfig } = require('./file');
 const LMS_BACKEND_LINK = 'http://13.232.172.215:3001/';
+// const LMS_BACKEND_LINK = 'http://localhost:3001/';
+
 const socket = io(LMS_BACKEND_LINK);
 const server = require('http').createServer(app);
 const ioo = require('socket.io')(server, { cors: { origin: '*' } });
 
 socket.on('connect', async () => {
-  console.log('connected')
+  console.log('asking for files');
+  socket.emit('askFiles', { kioskId: 'PTK-001' });
+  console.log('connected');
   setInterval(() => {
+    if (!socket.connected) return; 
     console.log('asking for files');
     socket.emit('askFiles', { kioskId: 'PTK-001' });
-  }, 30000);
+  }, 50000);
 });
 
 socket.on('error', (e) => {
-  console.log(e); 
-})
+  console.log(e);
+});
 
 // dns.resolve('google.com', (err, add) => {
 //   if (err) return;
@@ -29,7 +34,7 @@ socket.on('error', (e) => {
 
 socket.on('getFiles', async (d) => {
   try {
-    console.log('got files', d)
+    console.log('got files', d);
     await kioskConfig(d, 'kiosk', ioo);
   } catch (e) {
     console.log(e);
@@ -48,7 +53,7 @@ app.get('/links', async (req, res) => {
     );
     nwKiosk.kiosk.mediaForBottomOffers =
       nwKiosk.kiosk.mediaForBottomOffers.filter((e) => !e.archive);
-      
+
     return res.status(200).json({ message: 'Done!', data: nwKiosk });
   } catch (e) {
     console.log(e);
