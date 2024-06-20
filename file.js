@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { checkFolder } = require('./folder');
-const reload = false; 
+let reload = false; 
 const createFile = async (d, config, fileInfo, key) => {
   const path = __dirname + '/files/' + d[config].customId + '/' + key;
   const folder = await checkFolder(path);
