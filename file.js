@@ -92,6 +92,7 @@ module.exports.kioskConfig = async (d, config, ioo) => {
   console.log('reload', reload);
   if (reload) {
     ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
+    reload = false; 
   }
   await fs.writeFileSync('config.json', JSON.stringify(nwKiosk));
 };
