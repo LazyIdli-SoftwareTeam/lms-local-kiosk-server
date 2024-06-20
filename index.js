@@ -15,7 +15,7 @@ socket.on('connect', async () => {
   setInterval(() => {
     console.log('asking for files');
     socket.emit('askFiles', { kioskId: 'PTK-001' });
-  }, 10000);
+  }, 30000);
 });
 
 socket.on('error', (e) => {
