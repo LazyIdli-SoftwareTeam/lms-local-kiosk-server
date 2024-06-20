@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { checkFolder } = require('./folder');
-let reload = false;
+
 const createFile = async (d, config, fileInfo, key) => {
   const path = __dirname + '/files/' + d[config].customId + '/' + key;
   const folder = await checkFolder(path);
@@ -32,6 +32,7 @@ const deleteInstructionVideo = async (kisokId) => {
 };
 
 module.exports.kioskConfig = async (d, config, ioo) => {
+  let reload = false;
   for (const el of Object.keys(d[config])) {
     if (
       el === 'mediaForTopAd' ||
