@@ -58,7 +58,6 @@ module.exports.kioskConfig = async (d, config, ioo) => {
         if (err) console.log(err);
         for (const file of files) {
           if (!publishedFiles.includes(file)) {
-            console.log('here', file);
             await fs.unlinkSync(dirPath + '/' + file);
           }
         }
