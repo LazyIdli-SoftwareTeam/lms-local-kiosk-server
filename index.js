@@ -5,16 +5,13 @@ const app = express();
 let config = require('./config.json');
 const cors = require('cors');
 const { kioskConfig } = require('./file');
-// const LMS_BACKEND_LINK = 'http://13.232.172.215:3001/';
-const LMS_BACKEND_LINK = 'http://localhost:3001/';
+const LMS_BACKEND_LINK = 'http://13.232.172.215:3001/';
+// const LMS_BACKEND_LINK = 'http://localhost:3001/';
 const KIOSK_ID = 'PTK-001';
 var cron = require('node-cron');
 const socket = io(LMS_BACKEND_LINK);
 const server = require('http').createServer(app);
 const ioo = require('socket.io')(server, { cors: { origin: '*' } });
-  cron.schedule('*/2 * * * *', () => {
-    console.log('sjnw')
-  })
 socket.on('connect', async () => {
   console.log('asking for files');
   socket.emit('askFiles', { kioskId: KIOSK_ID });
