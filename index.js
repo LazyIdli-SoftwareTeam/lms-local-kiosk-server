@@ -7,6 +7,7 @@ const cors = require('cors');
 const { kioskConfig } = require('./file');
 const LMS_BACKEND_LINK = 'http://13.232.172.215:3001/';
 // const LMS_BACKEND_LINK = 'http://localhost:3001/';
+const KIOSK_ID = 'PTK-002';
 
 const socket = io(LMS_BACKEND_LINK);
 const server = require('http').createServer(app);
@@ -14,12 +15,12 @@ const ioo = require('socket.io')(server, { cors: { origin: '*' } });
 
 socket.on('connect', async () => {
   console.log('asking for files');
-  socket.emit('askFiles', { kioskId: 'PTK-001' });
+  socket.emit('askFiles', { kioskId: KIOSK_ID });
   console.log('connected');
   setInterval(() => {
     if (!socket.connected) return; 
     console.log('asking for files');
-    socket.emit('askFiles', { kioskId: 'PTK-001' });
+    socket.emit('askFiles', { kioskId: KIOSK_ID });
   }, 50000);
 });
 
@@ -34,6 +35,7 @@ socket.on('error', (e) => {
 
 socket.on('getFiles', async (d) => {
   try {
+    if (d.kiosk.customId != KIOSK_ID) return; 
     console.log('got files', d);
     await kioskConfig(d, 'kiosk', ioo);
   } catch (e) {
