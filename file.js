@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { checkFolder } = require('./folder');
-let reload = false; 
-const createFile = async (d, config, fileInfo, key) => {
+let reload = false;
+const createFile = async (d, config, fileInfo, key, ioo) => {
   const path = __dirname + '/files/' + d[config].customId + '/' + key;
   const folder = await checkFolder(path);
   const exists = await fs.existsSync(path + '/' + fileInfo.fileInfo.name);
@@ -9,13 +9,6 @@ const createFile = async (d, config, fileInfo, key) => {
     return false;
   }
   if (folder && !exists) {
-    await fs.writeFileSync(
-      path + '/' + fileInfo.fileInfo.name,
-      fileInfo.chunks,
-      {
-        flag: 'wx',
-      }
-    );
     return true;
   }
 };
@@ -46,7 +39,7 @@ module.exports.kioskConfig = async (d, config, ioo) => {
       if (!tempO) continue;
       for (const fileInfo of tempO) {
         if (fileInfo.archive) continue;
-        const f = await createFile(d, config, fileInfo, el);
+        const f = await createFile(d, config, fileInfo, el, ioo);
         if (f) {
         }
         publishedFiles.push(fileInfo.fileInfo.name);
@@ -84,9 +77,6 @@ module.exports.kioskConfig = async (d, config, ioo) => {
       nwKiosk.kiosk[el] = newTemp;
     }
   }
-  // if (reload) {
-  //   ioo.sockets.emit('reload', { id: nwKiosk.kiosk.customId });
-  //   reload = false; 
-  // }
+
   await fs.writeFileSync('config.json', JSON.stringify(nwKiosk));
 };
